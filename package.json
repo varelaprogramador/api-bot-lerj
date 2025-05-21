@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "cross-env NODE_ENV=production PORT=80 node .",
-    "build": "cross-env NODE_ENV=production PORT=80 tsc && tsc-alias",
+    "build": "/app/node_modules/.bin/cross-env NODE_ENV=production PORT=80 /app/node_modules/.bin/tsc && /app/node_modules/.bin/tsc-alias",
     "dev": "cross-env NODE_ENV=development PORT=3333 tsx watch src/server.ts"
   },
   "devDependencies": {

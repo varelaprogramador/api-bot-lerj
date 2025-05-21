@@ -6,8 +6,6 @@ COPY package.json package-lock.json ./
 
 RUN npm ci
 
-RUN npm install -g cross-env
-
 COPY . .
 
 RUN npm run build
