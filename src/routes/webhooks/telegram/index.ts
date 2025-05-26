@@ -331,7 +331,7 @@ bot.on("callback_query", async (ctx: any) => {
    Estamos aqui para ajudar você a encontrar a melhor opção para suas necessidades! 😊
     `;
       await ctx.deleteMessage();
-      const imageUrl = "https://nextgiftcards.com/banner.jpeg";
+      const imageUrl = `${process.env.API_URL}/images/bot/banner.jpg`;
       ctx.replyWithPhoto(imageUrl, {
         caption: mensagem,
         reply_markup: {
@@ -476,7 +476,7 @@ bot.on("callback_query", async (ctx: any) => {
       console.log(produtos);
 
       const mensagem = "Escolha um dos combos acima:";
-      const imageUrl = "https://nextgiftcards.com/banner.jpeg";
+      const imageUrl = `${process.env.API_URL}/images/bot/banner.jpg`;
       await ctx.deleteMessage();
       ctx.replyWithPhoto(imageUrl, {
         caption: mensagem,
