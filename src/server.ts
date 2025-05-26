@@ -7,6 +7,7 @@ import helmet from "@fastify/helmet";
 import autoload from "@fastify/autoload";
 import compress from "@fastify/compress";
 import { clerkPlugin } from "@clerk/fastify";
+import fastifyStatic from "@fastify/static";
 
 import { PORT } from "@/settings/env";
 import { allowedOrigins } from "./settings";
@@ -61,6 +62,13 @@ app.register(helmet, {
   },
   noSniff: true,
   xssFilter: true,
+});
+
+// Configura o serviço de arquivos estáticos para o diretório public/images
+app.register(fastifyStatic, {
+  root: path.join(__dirname, "public", "images"),
+  prefix: "/public/images/", // O prefixo da URL para acessar as imagens
+  decorateReply: false, // Para evitar conflitos com outras decorações de resposta
 });
 
 // Carrega rotas automaticamente da pasta routes
