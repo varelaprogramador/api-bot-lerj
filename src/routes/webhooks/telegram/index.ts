@@ -331,7 +331,7 @@ bot.on("callback_query", async (ctx: any) => {
    Estamos aqui para ajudar você a encontrar a melhor opção para suas necessidades! 😊
     `;
       await ctx.deleteMessage();
-      const imageUrl = `${process.env.API_URL}public/images/bot/banner.jpg`;
+      const imageUrl = `https://ctenwsbxdxlzvbdhfidw.supabase.co/storage/v1/object/public/galeria-bot//banner.jpg`;
       ctx.replyWithPhoto(imageUrl, {
         caption: mensagem,
         reply_markup: {
@@ -476,7 +476,7 @@ bot.on("callback_query", async (ctx: any) => {
       console.log(produtos);
 
       const mensagem = "Escolha um dos combos acima:";
-      const imageUrl = `${process.env.API_URL}public/images/bot/banner.jpg`;
+      const imageUrl = `https://ctenwsbxdxlzvbdhfidw.supabase.co/storage/v1/object/public/galeria-bot//banner.jpg`;
       await ctx.deleteMessage();
       ctx.replyWithPhoto(imageUrl, {
         caption: mensagem,
