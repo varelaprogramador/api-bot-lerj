@@ -42,9 +42,10 @@ app.register(compress, {
 
 // Configuração do CORS mais restritiva
 app.register(cors, {
-  origin: allowedOrigins,
+  origin: "*",
+  // origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  credentials: true,
+  // credentials: true,
   maxAge: 86400, // 24 horas
 });
 
