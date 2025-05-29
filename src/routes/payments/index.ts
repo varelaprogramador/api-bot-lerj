@@ -272,27 +272,27 @@ export default async function (app: FastifyInstance) {
         console.log("==========Notificação enviada para EVO============");
         // Enviar notificação para o EVO
 
-        const evoMessage = `🛍️ *Nova Transação*
-          
-  👤 *Cliente:* ${dadosProcessados.nome}
-  📱 *Telefone:* ${dadosProcessados.telefone}
-  💰 *Valor:* R$ ${rechargeAmount.toFixed(2)}
-  🛒 *Produto:* ${dadosProcessados.produto.nome}
-  📝 *Tipo:* ${dadosProcessados.type_product}
-  🆔 *ID Transação:* ${id_transacao}
-  🔗 *Link PIX:* ${responseData.charge.paymentLinkUrl}
-  📋 *Código PIX:* ${responseData.charge.brCode}`;
+        //       const evoMessage = `🛍️ *Nova Transação*
 
-        await fetch(`${process.env.API_URL}/evo`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: evoMessage,
-          }),
-        });
-        console.log("Notificação enviada para EVO:", evoMessage);
+        // 👤 *Cliente:* ${dadosProcessados.nome}
+        // 📱 *Telefone:* ${dadosProcessados.telefone}
+        // 💰 *Valor:* R$ ${rechargeAmount.toFixed(2)}
+        // 🛒 *Produto:* ${dadosProcessados.produto.nome}
+        // 📝 *Tipo:* ${dadosProcessados.type_product}
+        // 🆔 *ID Transação:* ${id_transacao}
+        // 🔗 *Link PIX:* ${responseData.charge.paymentLinkUrl}
+        // 📋 *Código PIX:* ${responseData.charge.brCode}`;
+
+        //       await fetch(`${process.env.API_URL}/evo`, {
+        //         method: "POST",
+        //         headers: {
+        //           "Content-Type": "application/json",
+        //         },
+        //         body: JSON.stringify({
+        //           message: evoMessage,
+        //         }),
+        //       });
+        //       console.log("Notificação enviada para EVO:", evoMessage);
       }
       return reply.send(responseData);
     } catch (error) {
