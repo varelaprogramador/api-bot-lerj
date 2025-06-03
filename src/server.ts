@@ -8,6 +8,8 @@ import autoload from "@fastify/autoload";
 import compress from "@fastify/compress";
 import { clerkPlugin } from "@clerk/fastify";
 import fastifyStatic from "@fastify/static";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
 
 import { PORT } from "@/settings/env";
 import { allowedOrigins } from "./settings";
@@ -70,6 +72,43 @@ app.register(fastifyStatic, {
   root: path.join(__dirname, "public", "images"),
   prefix: "/public/images/", // O prefixo da URL para acessar as imagens
   decorateReply: false, // Para evitar conflitos com outras decorações de resposta
+});
+
+// Configuração do Swagger
+app.register(fastifySwagger, {
+  swagger: {
+    info: {
+      title: "API Bot Lerj Documentation",
+      description: "Documentação da API do Bot Lerj",
+      version: "1.0.0",
+    },
+    externalDocs: {
+      url: "https://swagger.io",
+      description: "Find more info here",
+    },
+    schemes: ["http"],
+    consumes: ["application/json"],
+    produces: ["application/json"],
+  },
+});
+
+app.register(fastifySwaggerUi, {
+  routePrefix: "/documentation",
+  uiConfig: {
+    docExpansion: "full",
+    deepLinking: false,
+  },
+  uiHooks: {
+    onRequest: function (request, reply, next) {
+      next();
+    },
+    preHandler: function (request, reply, next) {
+      next();
+    },
+  },
+  staticCSP: true,
+  transformStaticCSP: (header) => header,
+  transformSpecificationClone: true,
 });
 
 // Carrega rotas automaticamente da pasta routes
