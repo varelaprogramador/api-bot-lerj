@@ -190,7 +190,7 @@ const clearUserMessages = async (userId: string) => {
 
 // Configurar comandos do bot (mantém a lógica existente)
 bot.command("start", async (ctx: any) => {
-  ctx.reply("✨ Olá, seja Bem vindo ao canal de vendas da next recargas! ✨", {
+  ctx.reply("✨ Olá, seja Bem vindo ao canal de vendas da lerj recargas! ✨", {
     reply_markup: {
       inline_keyboard: [
         [
@@ -242,7 +242,7 @@ bot.on("callback_query", async (ctx: any) => {
 
       const { saldo, saldo_indicacao } = data || {};
 
-      const message = `💟 Bem-vindo(a) à Recarga Next! 💟
+      const message = `💟 Bem-vindo(a) à LERJ RECARGAS! 💟
 ✨ A melhor loja de streaming do Telegram! ✨
 
  🧾 Sua Ficha de Usuário:
@@ -261,7 +261,7 @@ bot.on("callback_query", async (ctx: any) => {
               { text: "💰 Saldo", callback_data: "saldo" },
               { text: "👤 Perfil", callback_data: "perfil" },
             ],
-            [{ text: "🛠️ Suporte", url: "https://t.me/nextrecarga" }],
+            [{ text: "🛠️ Suporte", url: "https://t.me/lerjsuporte" }],
           ],
         },
       });
@@ -297,7 +297,7 @@ bot.on("callback_query", async (ctx: any) => {
 
       const { saldo, saldo_indicacao } = data || {};
 
-      const message = `💟 Bem-vindo(a) à Recarga Next! 💟
+      const message = `💟 Bem-vindo(a) à LERJ RECARGAS! 💟
 ✨ A melhor loja de streaming do Telegram! ✨
 
  🧾 Sua Ficha de Usuário:
@@ -754,7 +754,7 @@ bot.on("callback_query", async (ctx: any) => {
                 [
                   {
                     text: "Clique aqui para chamar o suporte",
-                    url: "https://t.me/nextrecarga",
+                    url: "https://t.me/lerjsuporte",
                   },
                 ],
               ],
@@ -1000,7 +1000,7 @@ Se tiver dúvidas, estamos aqui para ajudar. 💬
           body: JSON.stringify({
             correlationID: `${userId}-${id_transacao}`,
             value: rechargeAmount * 100,
-            comment: "ADIÇÃO DE SALDOS - NEXT",
+            comment: "ADIÇÃO DE SALDOS - LERK RECARGAS",
             additionalInfo: [
               { key: "UserID", value: userId },
               { key: "ID", value: id_transacao },
@@ -1098,7 +1098,7 @@ Se tiver dúvidas, estamos aqui para ajudar. 💬
           .join("\n") || "Nenhuma deposito realizado ainda.";
 
       const message = `
-💟 Bem-vindo(a) à Recarga Next! 💟  
+💟 Bem-vindo(a) à LERJ RECARGAS! 💟  
 ✨ A melhor loja de streaming do Telegram! ✨
 
 🧾 Sua Ficha de Usuário:
