@@ -316,7 +316,7 @@ bot.on("callback_query", async (ctx: any) => {
               { text: "💰 Saldo", callback_data: "saldo" },
               { text: "👤 Perfil", callback_data: "perfil" },
             ],
-            [{ text: "🛠️ Suporte", url: "https://t.me/nextrecarga" }],
+            [{ text: "🛠️ Suporte", url: "https://t.me/lerjsuporte" }],
           ],
         },
       });
