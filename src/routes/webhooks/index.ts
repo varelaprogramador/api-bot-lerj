@@ -6,232 +6,232 @@ import { sendError, sendSuccess } from "@/utils/response-formatter";
 import { CodigosProps } from "@/utils/codigos";
 
 export default async function (app: FastifyInstance) {
-  //   app.post("/pix-server", async (req, reply) => {
-  //     try {
-  //       const data = req.body as any;
-  //       const isTestEvent = data?.event === "teste_webhook";
+  app.post("/pix-server", async (req, reply) => {
+    try {
+      const data = req.body as any;
+      const isTestEvent = data?.event === "teste_webhook";
 
-  //       if (isTestEvent) {
-  //         console.log("Evento de teste recebido com sucesso.");
-  //         return reply.status(StatusCodes.OK).send({
-  //           message: "Evento de teste recebido com sucesso.",
-  //         });
-  //       }
+      if (isTestEvent) {
+        console.log("Evento de teste recebido com sucesso.");
+        return reply.status(StatusCodes.OK).send({
+          message: "Evento de teste recebido com sucesso.",
+        });
+      }
 
-  //       const { additionalInfo } = data?.charge || {};
+      const { additionalInfo } = data?.charge || {};
 
-  //       if (!additionalInfo) {
-  //         console.log("Campos adicionais não encontrados");
-  //         return reply.status(StatusCodes.BAD_REQUEST).send({
-  //           message: "Campos adicionais não encontrados",
-  //         });
-  //       }
+      if (!additionalInfo) {
+        console.log("Campos adicionais não encontrados");
+        return reply.status(StatusCodes.BAD_REQUEST).send({
+          message: "Campos adicionais não encontrados",
+        });
+      }
 
-  //       const eventType = data?.event;
-  //       const allowedEvents = ["OPENPIX:CHARGE_COMPLETED"];
+      const eventType = data?.event;
+      const allowedEvents = ["OPENPIX:CHARGE_COMPLETED"];
 
-  //       if (!allowedEvents.includes(eventType)) {
-  //         console.log("Evento não permitido:", eventType);
-  //         return reply.status(StatusCodes.BAD_REQUEST).send({
-  //           error: "Evento não permitido",
-  //         });
-  //       }
+      if (!allowedEvents.includes(eventType)) {
+        console.log("Evento não permitido:", eventType);
+        return reply.status(StatusCodes.BAD_REQUEST).send({
+          error: "Evento não permitido",
+        });
+      }
 
-  //       // Valida se o evento é o esperado
-  //       if (data.event !== "OPENPIX:CHARGE_COMPLETED") {
-  //         return reply.status(StatusCodes.BAD_REQUEST).send({
-  //           error: "Evento não suportado",
-  //         });
-  //       }
+      // Valida se o evento é o esperado
+      if (data.event !== "OPENPIX:CHARGE_COMPLETED") {
+        return reply.status(StatusCodes.BAD_REQUEST).send({
+          error: "Evento não suportado",
+        });
+      }
 
-  //       // Verifica a origem
-  //       const originField = additionalInfo.find(
-  //         (info: any) => info.key === "Origin"
-  //       );
+      // Verifica a origem
+      const originField = additionalInfo.find(
+        (info: any) => info.key === "Origin"
+      );
 
-  //       const originValue = originField?.value;
+      const originValue = originField?.value;
 
-  //       if (!originValue) {
-  //         console.log("Campo Origin não encontrado");
-  //         return reply.status(StatusCodes.BAD_REQUEST).send({
-  //           error: "Campo Origin não encontrado",
-  //         });
-  //       }
+      if (!originValue) {
+        console.log("Campo Origin não encontrado");
+        return reply.status(StatusCodes.BAD_REQUEST).send({
+          error: "Campo Origin não encontrado",
+        });
+      }
 
-  //       const isBotOrigin = originValue === "bot";
-  //       const isSiteOrigin = originValue === "site";
+      const isBotOrigin = originValue === "bot";
+      const isSiteOrigin = originValue === "site";
 
-  //       if (isBotOrigin) {
-  //         // Para o bot, processamos de forma assíncrona para evitar timeout
-  //         processBotOrigin(data, additionalInfo, originValue).catch((error) => {
-  //           console.error("Erro no processamento do bot:", error);
-  //         });
+      if (isBotOrigin) {
+        // Para o bot, processamos de forma assíncrona para evitar timeout
+        processBotOrigin(data, additionalInfo, originValue).catch((error) => {
+          console.error("Erro no processamento do bot:", error);
+        });
 
-  //         // Retornamos resposta imediata para o bot
-  //         return reply.status(StatusCodes.OK).send({
-  //           message:
-  //             "Evento do bot recebido e sendo processado em segundo plano.",
-  //         });
-  //       } else if (isSiteOrigin) {
-  //         // Para o site, processamos de forma síncrona para obter o código
-  //         console.log("========Site=========");
+        // Retornamos resposta imediata para o bot
+        return reply.status(StatusCodes.OK).send({
+          message:
+            "Evento do bot recebido e sendo processado em segundo plano.",
+        });
+      } else if (isSiteOrigin) {
+        // Para o site, processamos de forma síncrona para obter o código
+        console.log("========Site=========");
 
-  //         try {
-  //           const produtoId = additionalInfo?.find(
-  //             (info: any) => info.key === "Product"
-  //           )?.value;
+        try {
+          const produtoId = additionalInfo?.find(
+            (info: any) => info.key === "Product"
+          )?.value;
 
-  //           // Recuperar códigos do produto apenas se o status for "ativo"
-  //           const { data: codigos, error: codigoError } = await supabase
-  //             .from("codigos")
-  //             .select("*")
-  //             .eq("id_produto", produtoId);
+          // Recuperar códigos do produto apenas se o status for "ativo"
+          const { data: codigos, error: codigoError } = await supabase
+            .from("codigos")
+            .select("*")
+            .eq("id_produto", produtoId);
 
-  //           // Filtrar códigos ativos
-  //           const defaultData = [
-  //             {
-  //               id_codigo: "",
-  //               id_produto: "",
-  //               codigo: "",
-  //               status: "",
-  //             },
-  //           ];
-  //           const codigosAtivos: CodigosProps[] =
-  //             codigos?.filter(
-  //               (codigo) => codigo.status.toLowerCase() === "ativo"
-  //             ) || defaultData;
+          // Filtrar códigos ativos
+          const defaultData = [
+            {
+              id_codigo: "",
+              id_produto: "",
+              codigo: "",
+              status: "",
+            },
+          ];
+          const codigosAtivos: CodigosProps[] =
+            codigos?.filter(
+              (codigo) => codigo.status.toLowerCase() === "ativo"
+            ) || defaultData;
 
-  //           if (codigoError || !codigosAtivos || codigosAtivos.length <= 0) {
-  //             console.log(
-  //               "❌ Não foi possível processar o código do produto. Solicite um chamado e envie o seu id."
-  //             );
-  //             return reply.status(StatusCodes.BAD_REQUEST).send({
-  //               error: "Nenhum código ativo encontrado",
-  //             });
-  //           }
+          if (codigoError || !codigosAtivos || codigosAtivos.length <= 0) {
+            console.log(
+              "❌ Não foi possível processar o código do produto. Solicite um chamado e envie o seu id."
+            );
+            return reply.status(StatusCodes.BAD_REQUEST).send({
+              error: "Nenhum código ativo encontrado",
+            });
+          }
 
-  //           // Atualizar o status do primeiro código ativo para "resgatado"
-  //           const codigoData = codigosAtivos[0]; // Usar o primeiro código ativo
-  //           const { error: updateCodigoError } = await supabase
-  //             .from("codigos")
-  //             .update({ status: "Resgatado" })
-  //             .eq("id_codigo", codigoData?.id_codigo);
+          // Atualizar o status do primeiro código ativo para "resgatado"
+          const codigoData = codigosAtivos[0]; // Usar o primeiro código ativo
+          const { error: updateCodigoError } = await supabase
+            .from("codigos")
+            .update({ status: "Resgatado" })
+            .eq("id_codigo", codigoData?.id_codigo);
 
-  //           if (updateCodigoError) {
-  //             console.error(
-  //               `Erro ao atualizar o código ${codigoData?.codigo}:`,
-  //               updateCodigoError
-  //             );
-  //           }
+          if (updateCodigoError) {
+            console.error(
+              `Erro ao atualizar o código ${codigoData?.codigo}:`,
+              updateCodigoError
+            );
+          }
 
-  //           const name =
-  //             additionalInfo.find((info: any) => info.key === "Nome")?.value ||
-  //             "Cliente";
-  //           const code = codigoData?.codigo || "N/A";
-  //           const phone = additionalInfo.find(
-  //             (info: any) => info.key === "Telefone"
-  //           )?.value;
-  //           const produto = additionalInfo.find(
-  //             (info: any) => info.key === "Product-Nome"
-  //           )?.value;
+          const name =
+            additionalInfo.find((info: any) => info.key === "Nome")?.value ||
+            "Cliente";
+          const code = codigoData?.codigo || "N/A";
+          const phone = additionalInfo.find(
+            (info: any) => info.key === "Telefone"
+          )?.value;
+          const produto = additionalInfo.find(
+            (info: any) => info.key === "Product-Nome"
+          )?.value;
 
-  //           console.log("Nome:", name);
-  //           console.log("Código:", code);
-  //           console.log("Telefone:", phone);
+          console.log("Nome:", name);
+          console.log("Código:", code);
+          console.log("Telefone:", phone);
 
-  //           if (phone) {
-  //             try {
-  //               // Timeout de 5 segundos para não bloquear resposta
-  //               const controller = new AbortController();
-  //               const timeoutId = setTimeout(() => controller.abort(), 5000);
+          if (phone) {
+            try {
+              // Timeout de 5 segundos para não bloquear resposta
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-  //               const response = await fetch(
-  //                 "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/107090/N0zmZuEk8fwK/",
-  //                 {
-  //                   method: "POST",
-  //                   headers: {
-  //                     "Content-Type": "application/json",
-  //                   },
-  //                   body: JSON.stringify({
-  //                     name: name,
-  //                     phone: phone,
-  //                     codigo: code,
-  //                     produto: produto,
-  //                   }),
-  //                   signal: controller.signal,
-  //                 }
-  //               );
+              const response = await fetch(
+                "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/107090/N0zmZuEk8fwK/",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    name: name,
+                    phone: phone,
+                    codigo: code,
+                    produto: produto,
+                  }),
+                  signal: controller.signal,
+                }
+              );
 
-  //               clearTimeout(timeoutId);
+              clearTimeout(timeoutId);
 
-  //               if (!response.ok) {
-  //                 console.error("Erro na resposta do webhook:", response.status);
-  //               }
-  //             } catch (error: any) {
-  //               if (error.name === "AbortError") {
-  //                 console.log("Requisição de webhook cancelada por timeout");
-  //               } else {
-  //                 console.error("Erro ao chamar webhook:", error);
-  //               }
-  //             }
-  //           }
+              if (!response.ok) {
+                console.error("Erro na resposta do webhook:", response.status);
+              }
+            } catch (error: any) {
+              if (error.name === "AbortError") {
+                console.log("Requisição de webhook cancelada por timeout");
+              } else {
+                console.error("Erro ao chamar webhook:", error);
+              }
+            }
+          }
 
-  //           // Atualizar o status da venda existente
-  //           const idTransacaoField = additionalInfo.find(
-  //             (info: any) => info.key === "ID"
-  //           );
-  //           if (!idTransacaoField) {
-  //             throw new Error(
-  //               "ID da transação não encontrado nos campos adicionais."
-  //             );
-  //           }
+          // Atualizar o status da venda existente
+          const idTransacaoField = additionalInfo.find(
+            (info: any) => info.key === "ID"
+          );
+          if (!idTransacaoField) {
+            throw new Error(
+              "ID da transação não encontrado nos campos adicionais."
+            );
+          }
 
-  //           const id_transacao = idTransacaoField.value; // Obtém o ID da transação
+          const id_transacao = idTransacaoField.value; // Obtém o ID da transação
 
-  //           const { error: vendaUpdateError } = await supabase
-  //             .from("vendas")
-  //             .update({ status: "concluida", origin: originValue })
-  //             .eq("id_transacao", id_transacao);
+          const { error: vendaUpdateError } = await supabase
+            .from("vendas")
+            .update({ status: "concluida", origin: originValue })
+            .eq("id_transacao", id_transacao);
 
-  //           if (vendaUpdateError) {
-  //             console.error(
-  //               "Erro ao atualizar o status da venda:",
-  //               vendaUpdateError.message
-  //             );
-  //             return reply.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-  //               message: "Erro ao atualizar o status da venda",
-  //               error: vendaUpdateError.message,
-  //             });
-  //           }
+          if (vendaUpdateError) {
+            console.error(
+              "Erro ao atualizar o status da venda:",
+              vendaUpdateError.message
+            );
+            return reply.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+              message: "Erro ao atualizar o status da venda",
+              error: vendaUpdateError.message,
+            });
+          }
 
-  //           console.log("Status da venda atualizado com sucesso.");
-  //           return reply.status(StatusCodes.OK).send({
-  //             message:
-  //               "Saldo atualizado e status da venda atualizado com sucesso.",
-  //             codigo: code,
-  //             produto: produto,
-  //           });
-  //         } catch (error) {
-  //           console.error("Erro ao processar origem 'site':", error);
-  //           return reply.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-  //             message: "Erro no processamento da compra via site",
-  //             error: (error as Error).message,
-  //           });
-  //         }
-  //       } else {
-  //         console.log("Origem não reconhecida:", originValue);
-  //         return reply.status(StatusCodes.BAD_REQUEST).send({
-  //           error: "Origem não reconhecida",
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error("Erro no processamento do POST:", error);
-  //       return reply.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-  //         message: "Erro",
-  //         error: (error as Error).message,
-  //       });
-  //     }
-  //   });
+          console.log("Status da venda atualizado com sucesso.");
+          return reply.status(StatusCodes.OK).send({
+            message:
+              "Saldo atualizado e status da venda atualizado com sucesso.",
+            codigo: code,
+            produto: produto,
+          });
+        } catch (error) {
+          console.error("Erro ao processar origem 'site':", error);
+          return reply.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            message: "Erro no processamento da compra via site",
+            error: (error as Error).message,
+          });
+        }
+      } else {
+        console.log("Origem não reconhecida:", originValue);
+        return reply.status(StatusCodes.BAD_REQUEST).send({
+          error: "Origem não reconhecida",
+        });
+      }
+    } catch (error) {
+      console.error("Erro no processamento do POST:", error);
+      return reply.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+        message: "Erro",
+        error: (error as Error).message,
+      });
+    }
+  });
   //   app.post("/pix-simples", async (req, reply) => {
   //     try {
   //       // Pegar os dados da requisição
