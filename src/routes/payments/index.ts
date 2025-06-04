@@ -227,7 +227,7 @@ export default async function (app: FastifyInstance) {
               /\s+/g,
               ""
             ),
-            value: rechargeAmount * 100,
+            value: Math.round(rechargeAmount * 100),
             comment: productComment,
             expiresIn: 420,
             additionalInfo: allAdditionalInfo,
@@ -266,7 +266,7 @@ export default async function (app: FastifyInstance) {
               message2: `📋 Ou copie e cole o código abaixo no app do seu banco:
 
   \`\`\`
-  ${responseData.charge.brCode}
+  ${responseData.charge?.brCode}
   \`\`\``,
             }),
           }
