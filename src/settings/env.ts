@@ -20,8 +20,8 @@ const envSchema = z.object({
   EVOLUTION_API_URL: z.string().trim(),
 
   // OPENPIX
-  OPENPIX_API_KEY: z.string().trim(),
-
+  OPENPIX_API_KEY_SITE: z.string().trim(),
+  OPENPIX_API_KEY_BOTCONVERSA: z.string().trim(),
   // TELEGRAM
   TELEGRAM_BOT_TOKEN: z.string().trim(),
   TELEGRAM_WEBHOOK_SECRET: z.string().trim(),

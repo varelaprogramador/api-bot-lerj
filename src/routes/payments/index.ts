@@ -371,7 +371,7 @@ export default async function (app: FastifyInstance) {
           },
           body: JSON.stringify({
             correlationID: `${produto.nome}+${v4()}`.replace(/\s+/g, ""),
-            value: produto.valor * 100,
+            value: Math.round(produto.valor * 100),
             comment: `Pagamento via PIX - ${produto.nome}`,
             expiresIn: 420,
             additionalInfo: [
@@ -394,27 +394,27 @@ export default async function (app: FastifyInstance) {
       const responseData = await response.json();
       console.log("Resposta OpenPix:", responseData);
 
-      // Enviar notificação para o EVO
-      const evoMessage = `🛍️ *Nova Transação*
-          
-👤 *Cliente:* ${nome}
-📱 *Telefone:* ${telefone}
-📧 *Email:* ${email || "Não informado"}
-💰 *Valor:* R$ ${produto.valor.toFixed(2)}
-🛒 *Produto:* ${produto.nome}
-🆔 *ID Transação:* ${id_transacao}
-🔗 *Link PIX:* ${responseData.charge.paymentLinkUrl}
-📋 *Código PIX:* ${responseData.charge.brCode}`;
+      //       // Enviar notificação para o EVO
+      //       const evoMessage = `🛍️ *Nova Transação*
 
-      await fetch(`${process.env.API_URL}/evo`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: evoMessage,
-        }),
-      });
+      // 👤 *Cliente:* ${nome}
+      // 📱 *Telefone:* ${telefone}
+      // 📧 *Email:* ${email || "Não informado"}
+      // 💰 *Valor:* R$ ${produto.valor.toFixed(2)}
+      // 🛒 *Produto:* ${produto.nome}
+      // 🆔 *ID Transação:* ${id_transacao}
+      // 🔗 *Link PIX:* ${responseData.charge.paymentLinkUrl}
+      // 📋 *Código PIX:* ${responseData.charge.brCode}`;
+
+      //       await fetch(`${process.env.API_URL}/evo`, {
+      //         method: "POST",
+      //         headers: {
+      //           "Content-Type": "application/json",
+      //         },
+      //         body: JSON.stringify({
+      //           message: evoMessage,
+      //         }),
+      //       });
 
       return reply.status(200).send(responseData);
     } catch (error) {
