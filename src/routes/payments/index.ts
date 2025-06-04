@@ -58,10 +58,7 @@ export default async function (app: FastifyInstance) {
         const { data: combos, error: comboError } = await supabase
           .from("bot_conversa_com_combos")
           .select("*")
-          .ilike(
-            "nome_combo",
-            `%${dadosProcessados.produto.nome.toLocaleLowerCase()}%`
-          );
+          .ilike("nome_combo", dadosProcessados.produto.nome);
 
         console.log("Combos encontrados:", combos);
         if (comboError || !combos || combos.length === 0) {
@@ -136,10 +133,7 @@ export default async function (app: FastifyInstance) {
         const { data: produtos, error: produtoError } = await supabase
           .from("bot_conversa_com_produto")
           .select("*")
-          .ilike(
-            "nome",
-            `%${dadosProcessados.produto.nome.toLocaleLowerCase()}%`
-          );
+          .ilike("nome", dadosProcessados.produto.nome);
 
         if (produtoError || !produtos || produtos.length === 0) {
           console.error(
