@@ -994,7 +994,7 @@ Se tiver dúvidas, estamos aqui para ajudar. 💬
         {
           method: "POST",
           headers: {
-            Authorization: `${process.env.OPENPIX_API_KEY}`,
+            Authorization: `${process.env.OPENPIX_API_KEY_SITE}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({

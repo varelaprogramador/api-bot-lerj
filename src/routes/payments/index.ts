@@ -219,7 +219,7 @@ export default async function (app: FastifyInstance) {
         {
           method: "POST",
           headers: {
-            Authorization: `Q2xpZW50X0lkXzM4NmEwYjIxLTRhZTMtNGUzMi05NmMzLTg0NmI1NmRkYzc4ZTpDbGllbnRfU2VjcmV0X0d4WmJZZ0VkUElEbDRobUU3RUxNQW5ybmtuNkhtTkRjNmVRT2JXNVhVT289`,
+            Authorization: `${process.env.OPENPIX_API_KEY_BOTCONVERSA}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -366,7 +366,7 @@ export default async function (app: FastifyInstance) {
         {
           method: "POST",
           headers: {
-            Authorization: `Q2xpZW50X0lkXzM4NmEwYjIxLTRhZTMtNGUzMi05NmMzLTg0NmI1NmRkYzc4ZTpDbGllbnRfU2VjcmV0X0d4WmJZZ0VkUElEbDRobUU3RUxNQW5ybmtuNkhtTkRjNmVRT2JXNVhVT289`,
+            Authorization: `${process.env.OPENPIX_API_KEY_SITE}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
