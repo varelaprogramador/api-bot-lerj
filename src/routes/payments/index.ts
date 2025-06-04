@@ -264,8 +264,10 @@ export default async function (app: FastifyInstance) {
   
   🔗 ${responseData.charge.paymentLinkUrl}`,
               message2: `📋 Ou copie e cole o código abaixo no app do seu banco:
-  
-  ${responseData.charge.brCode}`,
+
+  \`\`\`
+  ${responseData.charge.brCode}
+  \`\`\``,
             }),
           }
         );
