@@ -146,7 +146,7 @@ export default async function (app: FastifyInstance) {
               const timeoutId = setTimeout(() => controller.abort(), 5000);
 
               const response = await fetch(
-                "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/107090/N0zmZuEk8fwK/",
+                "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/103169/uVc1dRDh76H7/",
                 {
                   method: "POST",
                   headers: {
@@ -236,83 +236,6 @@ export default async function (app: FastifyInstance) {
       });
     }
   });
-  //   app.post("/pix-simples", async (req, reply) => {
-  //     try {
-  //       // Pegar os dados da requisição
-  //       const data = req.body as any;
-  //       console.log("Webhook PIX recebido:", JSON.stringify(data, null, 2));
-
-  //       // Verificar se é um evento de teste
-  //       if (data?.event === "teste_webhook") {
-  //         console.log("Evento de teste recebido com sucesso.");
-  //         return reply.status(StatusCodes.OK).send({
-  //           message: "Evento de teste recebido com sucesso.",
-  //         });
-  //       }
-
-  //       // Verificar se é um evento de pagamento concluído
-  //       if (data?.event === "OPENPIX:CHARGE_COMPLETED" && data?.charge) {
-  //         const { correlationID } = data.charge;
-
-  //         if (!correlationID) {
-  //           console.error("correlationID não encontrado no webhook");
-  //           return reply.status(StatusCodes.BAD_REQUEST).send({
-  //             error: "correlationID não encontrado",
-  //           });
-  //         }
-
-  //         // Atualizar o status da venda no banco de dados
-  //         if (supabase) {
-  //           try {
-  //             const { error } = await supabase
-  //               .from("vendas")
-  //               .update({ status: "concluida" })
-  //               .eq("correlation_id", correlationID);
-
-  //             if (error) {
-  //               console.error("Erro ao atualizar status da venda:", error);
-  //               return reply.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-  //                 error: "Erro ao atualizar status da venda",
-  //                 details: error.message,
-  //               });
-  //             }
-
-  //             console.log(
-  //               `Status da venda atualizado com sucesso para ${correlationID}`
-  //             );
-  //             return reply.status(StatusCodes.OK).send({
-  //               message: "Status da venda atualizado com sucesso.",
-  //             });
-  //           } catch (error: any) {
-  //             console.error("Erro ao processar webhook:", error);
-  //             return reply.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-  //               error: "Erro ao processar webhook",
-  //               details: error.message,
-  //             });
-  //           }
-  //         } else {
-  //           console.warn(
-  //             "Cliente Supabase não disponível, não foi possível atualizar a venda"
-  //           );
-  //           return reply.status(StatusCodes.OK).send({
-  //             warning: "Cliente Supabase não disponível",
-  //             message: "Recebido, mas não processado completamente",
-  //           });
-  //         }
-  //       }
-
-  //       // Se não for um evento suportado
-  //       return reply.status(StatusCodes.BAD_REQUEST).send({
-  //         message: "Evento não suportado",
-  //       });
-  //     } catch (error: any) {
-  //       console.error("Erro ao processar webhook:", error);
-  //       return reply.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-  //         error: "Erro ao processar webhook",
-  //         details: error.message,
-  //       });
-  //     }
-  //   });
   app.post("/openpix-botconversa", async (req, reply) => {
     try {
       const data: any = req.body; // Corpo da requisição
@@ -725,15 +648,12 @@ async function processBotOrigin(
         disparo: true,
       };
 
-      const response = await fetch(
-        "https://nextgiftcards.com/api/webhooks/telegram",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(dataUpdate),
-          signal: controller.signal,
-        }
-      );
+      const response = await fetch(process.env.API_URL + "/webhooks/telegram", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataUpdate),
+        signal: controller.signal,
+      });
 
       clearTimeout(timeoutId);
 
