@@ -392,6 +392,7 @@ export default async function (app: FastifyInstance) {
       );
 
       const responseData = await response.json();
+      console.log("Resposta OpenPix:", responseData);
 
       // Enviar notificação para o EVO
       const evoMessage = `🛍️ *Nova Transação*
