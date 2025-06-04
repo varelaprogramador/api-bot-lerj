@@ -1000,7 +1000,7 @@ Se tiver dúvidas, estamos aqui para ajudar. 💬
           body: JSON.stringify({
             correlationID: `${userId}-${id_transacao}`,
             value: rechargeAmount * 100,
-            comment: "ADIÇÃO DE SALDOS - LERK RECARGAS",
+            comment: "ADIÇÃO DE SALDOS - LERJ RECARGAS",
             additionalInfo: [
               { key: "UserID", value: userId },
               { key: "ID", value: id_transacao },
