@@ -9,7 +9,7 @@ export default async function (app: FastifyInstance) {
   app.post("/pix-server", async (req, reply) => {
     try {
       const data = req.body as any;
-      const isTestEvent = data?.event === "teste_webhook";
+      const isTestEvent = data?.evento === "teste_webhook";
 
       if (isTestEvent) {
         console.log("Evento de teste recebido com sucesso.");
