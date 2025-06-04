@@ -245,7 +245,7 @@ export default async function (app: FastifyInstance) {
 
       if (dadosProcessados.telefone) {
         await fetch(
-          "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/107090/1MkfIW9naU7u/",
+          "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/103169/HwJWbNEvb3F4/",
           {
             method: "POST",
             headers: {

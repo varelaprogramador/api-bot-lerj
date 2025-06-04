@@ -155,8 +155,12 @@ export default async function (app: FastifyInstance) {
                   body: JSON.stringify({
                     name: name,
                     phone: phone,
-                    codigo: code,
                     produto: produto,
+                    codigo: code,
+                    message: `🙋‍♀️ Olá ${name}, segue chave de ativação:
+      ✅ ${produto}
+      🔑 Código de Recargas: ${code}
+      ✨ Obrigado pela sua compra!  Até a próxima`,
                   }),
                   signal: controller.signal,
                 }
@@ -475,7 +479,7 @@ export default async function (app: FastifyInstance) {
 
             // Send to BotConversa webhook for combo
             const response = await fetch(
-              "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/107090/j9e9TDrKaU22/",
+              "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/103169/uVc1dRDh76H7/",
               {
                 method: "POST",
                 headers: {
@@ -552,7 +556,7 @@ export default async function (app: FastifyInstance) {
 
           if (phone) {
             const response = await fetch(
-              "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/107090/j9e9TDrKaU22/",
+              "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/103169/uVc1dRDh76H7/",
               {
                 method: "POST",
                 headers: {
