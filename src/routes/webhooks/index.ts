@@ -468,11 +468,10 @@ export default async function (app: FastifyInstance) {
               phone: phone,
               combo: comboNome,
               message: `🙋‍♀️ Olá ${name}, segue chave de ativação:
-    ✅ ${produtosNoCombo.map((produto) => produto.nome).join(", ")}
-    🔑 Código de Recargas: ${codigosResgatados
-      .map((codigo) => codigo.codigo)
-      .join(", ")}
-    ✨ Obrigado pela sua compra!  Até a próxima`,
+${codigosResgatados
+  .map((item) => `✅ ${item.produto} - Código de Recargas: ${item.codigo}`)
+  .join("\n")}
+✨ Obrigado pela sua compra!  Até a próxima`,
             };
 
             console.log("Enviando códigos do combo:", dadosCombo);
