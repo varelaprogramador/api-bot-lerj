@@ -55,10 +55,17 @@ export default async function (app: FastifyInstance) {
       // Based on type_product, fetch from appropriate table and process accordingly
       if (dadosProcessados.type_product === "combo") {
         // Fetching combo details from the combo table
+
         const { data: combos, error: comboError } = await supabase
           .from("bot_conversa_com_combos")
           .select("*")
-          .ilike("nome_combo", dadosProcessados.produto.nome.toLowerCase());
+          .ilike(
+            "nome_combo",
+            dadosProcessados.produto.nome
+              .toLowerCase()
+              .trim()
+              .replace(/\s+/g, "")
+          );
 
         console.log("Combos encontrados:", combos);
         if (comboError || !combos || combos.length === 0) {
@@ -133,7 +140,13 @@ export default async function (app: FastifyInstance) {
         const { data: produtos, error: produtoError } = await supabase
           .from("bot_conversa_com_produto")
           .select("*")
-          .ilike("nome", dadosProcessados.produto.nome.toLowerCase());
+          .ilike(
+            "nome",
+            dadosProcessados.produto.nome
+              .toLowerCase()
+              .trim()
+              .replace(/\s+/g, "")
+          );
 
         if (produtoError || !produtos || produtos.length === 0) {
           console.error(
