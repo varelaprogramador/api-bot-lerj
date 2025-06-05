@@ -84,7 +84,7 @@ export default async function (app: FastifyInstance) {
 
         try {
           const produtoId = additionalInfo?.find(
-            (info: any) => info.key === "Product"
+            (info: any) => info.key === "Produto-ID"
           )?.value;
 
           // Recuperar códigos do produto apenas se o status for "ativo"
@@ -92,7 +92,7 @@ export default async function (app: FastifyInstance) {
             .from("codigos")
             .select("*")
             .eq("id_produto", produtoId);
-
+          console.log(data);
           // Filtrar códigos ativos
           const defaultData = [
             {
@@ -138,7 +138,7 @@ export default async function (app: FastifyInstance) {
             (info: any) => info.key === "Telefone"
           )?.value;
           const produto = additionalInfo.find(
-            (info: any) => info.key === "Product-Nome"
+            (info: any) => info.key === "Produto"
           )?.value;
 
           console.log("Nome:", name);

@@ -389,6 +389,7 @@ export default async function (app: FastifyInstance) {
           expiresIn: 420,
           additionalInfo: [
             { key: "Nome", value: nome },
+            { key: "ID", value: id_transacao },
             { key: "Telefone", value: telefone },
             { key: "Email", value: email || "sem@gmail.com" },
             { key: "Produto", value: produto.nome },
