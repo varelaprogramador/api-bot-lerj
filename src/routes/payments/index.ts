@@ -376,35 +376,33 @@ export default async function (app: FastifyInstance) {
         },
       });
 
-      const response = await fetch(
-        "https://api.openpix.com.br/api/v1/charge?return_existing=true",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `${process.env.OPENPIX_API_KEY_SITE}`,
-            "Content-Type": "application/json",
+      const response = await fetch("https://api.openpix.com.br/api/v1/charge", {
+        method: "POST",
+        headers: {
+          Authorization: `${process.env.OPENPIX_API_KEY_SITE}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          correlationID: `${produto.nome}+${v4()}`.replace(/\s+/g, ""),
+          value: Math.round(produto.valor * 100),
+          comment: `Pagamento via PIX SITE - ${produto.nome}`,
+          expiresIn: 420,
+          additionalInfo: [
+            { key: "Nome", value: nome },
+            { key: "Telefone", value: telefone },
+            { key: "Email", value: email || "sem@gmail.com" },
+            { key: "Produto", value: produto.nome },
+            { key: "Produto-ID", value: produto.id },
+            { key: "Invoice", value: Date.now().toString() },
+            { key: "Origin", value: "site" },
+          ],
+          payer: {
+            name: nome,
+            email: email || "",
+            phone: telefone,
           },
-          body: JSON.stringify({
-            correlationID: `${produto.nome}+${v4()}`.replace(/\s+/g, ""),
-            value: Math.round(produto.valor * 100),
-            comment: `Pagamento via PIX - ${produto.nome}`,
-            expiresIn: 420,
-            additionalInfo: [
-              { key: "Nome", value: nome },
-              { key: "Telefone", value: telefone },
-              { key: "Email", value: email || "sem@gmail.com" },
-              { key: "Produto", value: produto.nome },
-              { key: "Produto-ID", value: produto.id },
-              { key: "Invoice", value: Date.now().toString() },
-            ],
-            payer: {
-              name: nome,
-              email: email || "",
-              phone: telefone,
-            },
-          }),
-        }
-      );
+        }),
+      });
 
       const responseData = await response.json();
       console.log("Resposta OpenPix:", responseData);

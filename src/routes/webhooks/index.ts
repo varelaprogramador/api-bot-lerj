@@ -28,7 +28,10 @@ export default async function (app: FastifyInstance) {
       }
 
       const eventType = data?.event;
-      const allowedEvents = ["OPENPIX:CHARGE_COMPLETED"];
+      const allowedEvents = [
+        "OPENPIX:CHARGE_COMPLETED",
+        "OPENPIX:TRANSACTION_RECEIVED",
+      ];
 
       if (!allowedEvents.includes(eventType)) {
         console.log("Evento não permitido:", eventType);
@@ -38,7 +41,10 @@ export default async function (app: FastifyInstance) {
       }
 
       // Valida se o evento é o esperado
-      if (data.event !== "OPENPIX:CHARGE_COMPLETED") {
+      if (
+        data.event !== "OPENPIX:CHARGE_COMPLETED" &&
+        data.event !== "OPENPIX:TRANSACTION_RECEIVED"
+      ) {
         return reply.status(StatusCodes.BAD_REQUEST).send({
           error: "Evento não suportado",
         });
