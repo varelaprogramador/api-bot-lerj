@@ -242,7 +242,7 @@ export default async function (app: FastifyInstance) {
             ),
             value: Math.round(rechargeAmount * 100),
             comment: productComment,
-            expiresIn: 420,
+            expiresIn: 7200,
             additionalInfo: allAdditionalInfo,
             payer: {
               name: dadosProcessados.nome,
@@ -386,7 +386,7 @@ export default async function (app: FastifyInstance) {
           correlationID: `${produto.nome}+${v4()}`.replace(/\s+/g, ""),
           value: Math.round(produto.valor * 100),
           comment: `Pagamento via PIX SITE - ${produto.nome}`,
-          expiresIn: 420,
+          expiresIn: 7200,
           additionalInfo: [
             { key: "Nome", value: nome },
             { key: "ID", value: id_transacao },
