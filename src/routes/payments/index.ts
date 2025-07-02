@@ -4,6 +4,17 @@ import { ProdutosProps } from "@/utils/produto";
 import { v4 } from "uuid";
 import { dispararWebhook } from "@/utils/webhook";
 
+// Função utilitária para converter para o formato correto no fuso de Brasília
+const toBrTimestamp = (dateInput: string | number | Date) => {
+  const date = new Date(dateInput);
+  return date
+    .toLocaleString("sv-SE", {
+      timeZone: "America/Sao_Paulo",
+      hour12: false,
+    })
+    .replace("T", " ");
+};
+
 export default async function (app: FastifyInstance) {
   app.post("/bot-conversa", async (req, reply) => {
     try {
@@ -273,11 +284,15 @@ export default async function (app: FastifyInstance) {
             br_code: charge.brCode || null,
             qr_code_image: charge.qrCodeImage || null,
             expires_in: charge.expiresIn || null,
-            expires_date: new Date(
-              Date.now() + 2 * 60 * 60 * 1000
-            ).toISOString(),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            expires_date: charge.expiresAt
+              ? toBrTimestamp(charge.expiresAt)
+              : toBrTimestamp(Date.now() + 2 * 60 * 60 * 1000),
+            created_at: charge.createdAt
+              ? toBrTimestamp(charge.createdAt)
+              : toBrTimestamp(Date.now()),
+            updated_at: charge.updatedAt
+              ? toBrTimestamp(charge.updatedAt)
+              : toBrTimestamp(Date.now()),
             customer: charge.customer || null,
             payment_methods: charge.paymentMethods || null,
             additional_info: charge.additionalInfo || null,
@@ -454,11 +469,15 @@ export default async function (app: FastifyInstance) {
             br_code: charge.brCode || null,
             qr_code_image: charge.qrCodeImage || null,
             expires_in: charge.expiresIn || null,
-            expires_date: new Date(
-              Date.now() + 2 * 60 * 60 * 1000
-            ).toISOString(),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            expires_date: charge.expiresAt
+              ? toBrTimestamp(charge.expiresAt)
+              : toBrTimestamp(Date.now() + 2 * 60 * 60 * 1000),
+            created_at: charge.createdAt
+              ? toBrTimestamp(charge.createdAt)
+              : toBrTimestamp(Date.now()),
+            updated_at: charge.updatedAt
+              ? toBrTimestamp(charge.updatedAt)
+              : toBrTimestamp(Date.now()),
             customer: charge.customer || null,
             payment_methods: charge.paymentMethods || null,
             additional_info: charge.additionalInfo || null,
