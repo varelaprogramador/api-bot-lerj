@@ -5,6 +5,17 @@ import { supabase } from "@/lib/supabase";
 import { sendError, sendSuccess } from "@/utils/response-formatter";
 import { CodigosProps } from "@/utils/codigos";
 
+// Função utilitária para converter para o formato correto no fuso de Brasília
+const toBrTimestamp = (dateInput: string | number | Date) => {
+  const date = new Date(dateInput);
+  return date
+    .toLocaleString("sv-SE", {
+      timeZone: "America/Sao_Paulo",
+      hour12: false,
+    })
+    .replace("T", " ");
+};
+
 export default async function (app: FastifyInstance) {
   app.post("/pix-server", async (req, reply) => {
     try {
@@ -215,6 +226,34 @@ export default async function (app: FastifyInstance) {
           }
 
           console.log("Status da venda atualizado com sucesso.");
+
+          // Após atualizar vendas, atualizar openpix_charges
+          const correlationId =
+            data.charge?.correlationID || data.charge?.correlationId;
+          if (correlationId) {
+            await supabase
+              .from("openpix_charges")
+              .update({
+                status: data.charge?.status || null,
+                updated_at: data.charge?.updatedAt
+                  ? toBrTimestamp(data.charge.updatedAt)
+                  : toBrTimestamp(Date.now()),
+                payment_methods: data.charge?.paymentMethods || null,
+                customer: data.charge?.customer || null,
+                value: data.charge?.value || null,
+                fee: data.charge?.fee || null,
+                br_code: data.charge?.brCode || null,
+                qr_code_image: data.charge?.qrCodeImage || null,
+                comment: data.charge?.comment || null,
+                expires_in: data.charge?.expiresIn || null,
+                expires_date: data.charge?.expiresAt
+                  ? toBrTimestamp(data.charge.expiresAt)
+                  : null,
+                additional_info: data.charge?.additionalInfo || null,
+              })
+              .eq("correlation_id", correlationId);
+          }
+
           return reply.status(StatusCodes.OK).send({
             message:
               "Saldo atualizado e status da venda atualizado com sucesso.",
@@ -533,6 +572,34 @@ ${codigosResgatados
           });
         }
         console.log("Status da venda atualizado com sucesso.");
+
+        // Após atualizar vendas, atualizar openpix_charges
+        const correlationId =
+          data.charge?.correlationID || data.charge?.correlationId;
+        if (correlationId) {
+          await supabase
+            .from("openpix_charges")
+            .update({
+              status: data.charge?.status || null,
+              updated_at: data.charge?.updatedAt
+                ? toBrTimestamp(data.charge.updatedAt)
+                : toBrTimestamp(Date.now()),
+              payment_methods: data.charge?.paymentMethods || null,
+              customer: data.charge?.customer || null,
+              value: data.charge?.value || null,
+              fee: data.charge?.fee || null,
+              br_code: data.charge?.brCode || null,
+              qr_code_image: data.charge?.qrCodeImage || null,
+              comment: data.charge?.comment || null,
+              expires_in: data.charge?.expiresIn || null,
+              expires_date: data.charge?.expiresAt
+                ? toBrTimestamp(data.charge.expiresAt)
+                : null,
+              additional_info: data.charge?.additionalInfo || null,
+            })
+            .eq("correlation_id", correlationId);
+        }
+
         return reply.code(200).send({
           message:
             "Códigos processados e status da venda atualizado com sucesso.",
