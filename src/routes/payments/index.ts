@@ -247,10 +247,7 @@ export default async function (app: FastifyInstance) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            correlationID: `${dadosProcessados.produto.nome}+${v4()}`.replace(
-              /\s+/g,
-              ""
-            ),
+            correlationID: v4(),
             value: Math.round(rechargeAmount * 100),
             comment: productComment,
             expiresIn: 7200,
@@ -313,45 +310,29 @@ export default async function (app: FastifyInstance) {
               phone: dadosProcessados.telefone,
               produto: dadosProcessados.produto.nome,
               codigo: responseData.charge.brCode,
-              message: `🔔 ${dadosProcessados.nome}, seu acesso está quase liberado!
-  Para concluir seu pedido de IPTV, siga as instruções abaixo:
-  
-  💳 Pagamento via PIX:
-  Acesse o link abaixo para efetuar o pagamento de forma rápida e segura:
-  
-  🔗 ${responseData.charge.paymentLinkUrl}`,
+              message: `🔔 ${
+                dadosProcessados.nome
+              }, seu acesso está quase liberado!
+Para concluir seu pedido de IPTV, siga as instruções abaixo:
+
+💳 Pagamento via PIX:
+Acesse o link abaixo para efetuar o pagamento de forma rápida e segura:
+
+🔗 ${
+                process.env.NEXT_PUBLIC_CHECKOUT +
+                (responseData.charge?.correlationID ||
+                  responseData.charge?.correlationId ||
+                  "")
+              }`,
               message2: `📋 Ou copie e cole o código abaixo no app do seu banco:
 
-  \`\`\`
-  ${responseData.charge?.brCode}
-  \`\`\``,
+\`\`\`
+${responseData.charge?.brCode}
+\`\`\``,
             }),
           }
         );
         console.log("==========Notificação enviada para EVO============");
-        // Enviar notificação para o EVO
-
-        //       const evoMessage = `🛍️ *Nova Transação*
-
-        // 👤 *Cliente:* ${dadosProcessados.nome}
-        // 📱 *Telefone:* ${dadosProcessados.telefone}
-        // 💰 *Valor:* R$ ${rechargeAmount.toFixed(2)}
-        // 🛒 *Produto:* ${dadosProcessados.produto.nome}
-        // 📝 *Tipo:* ${dadosProcessados.type_product}
-        // 🆔 *ID Transação:* ${id_transacao}
-        // 🔗 *Link PIX:* ${responseData.charge.paymentLinkUrl}
-        // 📋 *Código PIX:* ${responseData.charge.brCode}`;
-
-        //       await fetch(`${process.env.API_URL}/evo`, {
-        //         method: "POST",
-        //         headers: {
-        //           "Content-Type": "application/json",
-        //         },
-        //         body: JSON.stringify({
-        //           message: evoMessage,
-        //         }),
-        //       });
-        //       console.log("Notificação enviada para EVO:", evoMessage);
       }
       return reply.send(responseData);
     } catch (error) {
@@ -427,7 +408,7 @@ export default async function (app: FastifyInstance) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          correlationID: `${produto.nome}+${v4()}`.replace(/\s+/g, ""),
+          correlationID: v4(),
           value: Math.round(produto.valor * 100),
           comment: `Pagamento via PIX SITE - ${produto.nome}`,
           expiresIn: 7200,
@@ -485,28 +466,42 @@ export default async function (app: FastifyInstance) {
         ]);
       }
 
-      //       // Enviar notificação para o EVO
-      //       const evoMessage = `🛍️ *Nova Transação*
+      if (telefone) {
+        await fetch(
+          "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/103169/HwJWbNEvb3F4/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: nome,
+              phone: telefone,
+              produto: produto.nome,
+              codigo: responseData.charge.brCode,
+              message: `${nome}, seu acesso está quase liberado!
+Para concluir seu pedido de IPTV, siga as instruções abaixo:
 
-      // 👤 *Cliente:* ${nome}
-      // 📱 *Telefone:* ${telefone}
-      // 📧 *Email:* ${email || "Não informado"}
-      // 💰 *Valor:* R$ ${produto.valor.toFixed(2)}
-      // 🛒 *Produto:* ${produto.nome}
-      // 🆔 *ID Transação:* ${id_transacao}
-      // 🔗 *Link PIX:* ${responseData.charge.paymentLinkUrl}
-      // 📋 *Código PIX:* ${responseData.charge.brCode}`;
+💳 Pagamento via PIX:
+Acesse o link abaixo para efetuar o pagamento de forma rápida e segura:
 
-      //       await fetch(`${process.env.API_URL}/evo`, {
-      //         method: "POST",
-      //         headers: {
-      //           "Content-Type": "application/json",
-      //         },
-      //         body: JSON.stringify({
-      //           message: evoMessage,
-      //         }),
-      //       });
+🔗 ${
+                process.env.NEXT_PUBLIC_CHECKOUT +
+                (responseData.charge?.correlationID ||
+                  responseData.charge?.correlationId ||
+                  "")
+              }`,
+              message2: `📋 Ou copie e cole o código abaixo no app do seu banco:
 
+\
+${responseData.charge?.brCode}
+\
+`,
+            }),
+          }
+        );
+        console.log("==========Notificação enviada para EVO============");
+      }
       return reply.status(200).send(responseData);
     } catch (error) {
       console.error("Erro no processamento:", error);
