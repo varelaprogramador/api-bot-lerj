@@ -256,6 +256,33 @@ export default async function (app: FastifyInstance) {
       const responseData = await response.json();
       console.log("Resposta OpenPix:", responseData);
 
+      // Registro na tabela openpix_charges
+      if (responseData.charge) {
+        const charge = responseData.charge;
+        await supabase.from("openpix_charges").insert([
+          {
+            correlation_id:
+              charge.correlationID || charge.correlationId || null,
+            payment_link_id:
+              charge.paymentLinkID || charge.paymentLinkId || null,
+            payment_link_url: charge.paymentLinkUrl || null,
+            status: charge.status || null,
+            comment: charge.comment || null,
+            value: charge.value || null,
+            fee: charge.fee || null,
+            br_code: charge.brCode || null,
+            qr_code_image: charge.qrCodeImage || null,
+            expires_in: charge.expiresIn || null,
+            expires_date: charge.expiresAt ? new Date(charge.expiresAt) : null,
+            created_at: charge.createdAt ? new Date(charge.createdAt) : null,
+            updated_at: charge.updatedAt ? new Date(charge.updatedAt) : null,
+            customer: charge.customer || null,
+            payment_methods: charge.paymentMethods || null,
+            additional_info: charge.additionalInfo || null,
+          },
+        ]);
+      }
+
       if (dadosProcessados.telefone) {
         await fetch(
           "https://new-backend.botconversa.com.br/api/v1/webhooks-automation/catch/103169/HwJWbNEvb3F4/",
@@ -407,6 +434,33 @@ export default async function (app: FastifyInstance) {
 
       const responseData = await response.json();
       console.log("Resposta OpenPix:", responseData);
+
+      // Registro na tabela openpix_charges
+      if (responseData.charge) {
+        const charge = responseData.charge;
+        await supabase.from("openpix_charges").insert([
+          {
+            correlation_id:
+              charge.correlationID || charge.correlationId || null,
+            payment_link_id:
+              charge.paymentLinkID || charge.paymentLinkId || null,
+            payment_link_url: charge.paymentLinkUrl || null,
+            status: charge.status || null,
+            comment: charge.comment || null,
+            value: charge.value || null,
+            fee: charge.fee || null,
+            br_code: charge.brCode || null,
+            qr_code_image: charge.qrCodeImage || null,
+            expires_in: charge.expiresIn || null,
+            expires_date: charge.expiresAt ? new Date(charge.expiresAt) : null,
+            created_at: charge.createdAt ? new Date(charge.createdAt) : null,
+            updated_at: charge.updatedAt ? new Date(charge.updatedAt) : null,
+            customer: charge.customer || null,
+            payment_methods: charge.paymentMethods || null,
+            additional_info: charge.additionalInfo || null,
+          },
+        ]);
+      }
 
       //       // Enviar notificação para o EVO
       //       const evoMessage = `🛍️ *Nova Transação*
