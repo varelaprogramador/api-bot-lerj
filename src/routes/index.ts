@@ -1,14 +1,14 @@
-import { FastifyInstance } from 'fastify'
+import { FastifyInstance } from "fastify";
 
 export default async function (app: FastifyInstance) {
   // GET
-  app.get('/', async (_, reply) => {
+  app.get("/", async (_, reply) => {
     return reply.send({
-      message: 'Hello, world!',
-    })
-  })
+      message: "Hello, world!",
+    });
+  });
 
-  app.get('/ping', async (req, reply) => {
-    return reply.send({ message: 'pong' })
-  })
+  app.get("/ping", async (req, reply) => {
+    return reply.send({ message: "pong" });
+  });
 }

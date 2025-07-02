@@ -1,118 +1,177 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import axios from "axios";
 
-import { contactManager } from "@/utils/contact-manager";
+const getEvolutionApiConfig = () => {
+  const url = process.env.EVOLUTION_API_URL;
+  const key = process.env.EVOLUTION_API_KEY;
+  if (!url || !key) {
+    throw new Error("Configuração do Evolution API não encontrada");
+  }
+  return { url, key };
+};
 
-export default async function (fastify: FastifyInstance) {
-  fastify.post("/", async (request: FastifyRequest, reply: FastifyReply) => {
-    try {
-      if (
-        !process.env.EVOLUTION_API_URL ||
-        !process.env.EVOLUTION_API_KEY ||
-        !process.env.EVOLUTION_INSTANCE_ID
-      ) {
-        return reply.status(500).send({
-          message: "Erro de configuração",
-          error:
-            "Variáveis de ambiente do Evolution API (URL, Key ou Instance ID) não configuradas.",
-        });
+const fetchInstances = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const { url, key } = getEvolutionApiConfig();
+    const response = await axios.get(`${url}/instance/fetchInstances`, {
+      headers: {
+        "Content-Type": "application/json",
+        apikey: key,
+      },
+    });
+
+    const instances = response.data.map((instance: any) => ({
+      instanceName: instance.name,
+      status:
+        instance.connectionStatus === "open" ? "connected" : "disconnected",
+      number: instance.ownerJid?.split("@")[0] || null,
+      profileName: instance.profileName,
+      profilePicUrl: instance.profilePicUrl,
+      token: instance.token,
+      lastSeen: instance.updatedAt
+        ? new Date(instance.updatedAt).toLocaleString("pt-BR")
+        : null,
+      isOnline: instance.connectionStatus === "open",
+      isAuthenticated: instance.connectionStatus === "open",
+      messageCount: instance._count?.Message || 0,
+      contactCount: instance._count?.Contact || 0,
+      chatCount: instance._count?.Chat || 0,
+    }));
+
+    return reply.send(instances);
+  } catch (error: any) {
+    console.error("Erro ao buscar instâncias:", error);
+    return reply.status(500).send({
+      error: "Erro ao buscar instâncias",
+      details: error?.response?.data || error.message,
+    });
+  }
+};
+
+const createInstance = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const { url, key } = getEvolutionApiConfig();
+    const { instanceName } = request.body as { instanceName: string };
+
+    if (!instanceName) {
+      return reply
+        .status(400)
+        .send({ error: "Nome da instância é obrigatório" });
+    }
+
+    const response = await axios.post(
+      `${url}/instance/createInstance`,
+      { name: instanceName },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          apikey: key,
+        },
       }
+    );
 
-      const { message } = request.body as { message: string };
+    return reply.send(response.data);
+  } catch (error: any) {
+    console.error("Erro ao criar instância:", error);
+    return reply.status(500).send({
+      error: "Erro ao criar instância",
+      details: error?.response?.data || error.message,
+    });
+  }
+};
 
-      const contacts = await contactManager.listAllContacts();
+const deleteInstance = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const { url, key } = getEvolutionApiConfig();
+    const { instanceName } = request.body as { instanceName: string };
 
-      console.log(contacts, "contacts");
+    if (!instanceName) {
+      return reply
+        .status(400)
+        .send({ error: "Nome da instância é obrigatório" });
+    }
 
-      const results = await Promise.allSettled(
-        contacts.map(async (contact: { whatsapp: string }) => {
-          try {
-            const response = await fetch(
-              `${process.env.EVOLUTION_API_URL}/message/sendText/${process.env.EVOLUTION_INSTANCE_ID}`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  apikey: process.env.EVOLUTION_API_KEY as string,
-                },
-                body: JSON.stringify({
-                  number: contact.whatsapp,
-                  text2: message,
-                }),
-              }
-            );
+    const response = await axios.post(
+      `${url}/instance/deleteInstance`,
+      { name: instanceName },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          apikey: key,
+        },
+      }
+    );
 
-            if (!response.ok) {
-              let errorBody = "Erro desconhecido";
-              try {
-                errorBody = await response.json();
-              } catch (e) {
-                // Ignora erro ao tentar ler o corpo se não for JSON
-              }
-              throw new Error(
-                `Erro da API Evolution: ${response.status} - ${
-                  typeof errorBody === "object"
-                    ? JSON.stringify(errorBody)
-                    : errorBody
-                }`
-              );
-            }
+    return reply.send(response.data);
+  } catch (error: any) {
+    console.error("Erro ao deletar instância:", error);
+    return reply.status(500).send({
+      error: "Erro ao deletar instância",
+      details: error?.response?.data || error.message,
+    });
+  }
+};
 
-            return { success: true, contact };
-          } catch (error: any) {
-            console.error(`Erro ao enviar para ${contact.whatsapp}:`, error);
-            return { status: "rejected", reason: { contact, error } };
-          }
-        })
-      );
+const sendMessage = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const { url, key } = getEvolutionApiConfig();
+    const { instanceName, number, message, image, options } = request.body as {
+      instanceName: string;
+      number: string;
+      message?: string;
+      image?: string;
+      options?: any;
+    };
 
-      const successful = results.filter(
-        (
-          r
-        ): r is PromiseFulfilledResult<{
-          success: boolean;
-          contact: { whatsapp: string };
-        }> => r.status === "fulfilled" && r.value?.success === true
-      ).length;
-      const failed = results.length - successful;
-
-      return reply.send({
-        message: "Processo de envio concluído",
-        total: results.length,
-        successful,
-        failed,
-        details: results.map((r) => {
-          if (r.status === "fulfilled") {
-            return {
-              phone: (
-                r as PromiseFulfilledResult<{
-                  success: boolean;
-                  contact: { whatsapp: string };
-                }>
-              ).value.contact.whatsapp,
-              success: true,
-            };
-          } else {
-            const rejectedReason = r.reason as any;
-            const contactPhone =
-              rejectedReason?.contact?.whatsapp || "telefone desconhecido";
-            const errorMessage =
-              rejectedReason?.error?.message ||
-              rejectedReason?.message ||
-              JSON.stringify(rejectedReason);
-            return {
-              phone: contactPhone,
-              success: false,
-              error: errorMessage,
-            };
-          }
-        }),
-      });
-    } catch (error: any) {
-      console.error("Erro ao processar requisição:", error);
-      return reply.status(500).send({
-        message: "Erro ao enviar mensagens",
-        error: error instanceof Error ? error.message : "Erro desconhecido",
+    if (!instanceName || !number || (!message && !image)) {
+      return reply.status(400).send({
+        error:
+          "instanceName, number e pelo menos message ou image são obrigatórios",
       });
     }
-  });
+
+    let endpoint = "";
+    let payload: any = {
+      instanceName,
+      number,
+    };
+
+    if (image && !message) {
+      endpoint = `${url}/message/sendImage`;
+      payload.image = image;
+    } else if (image && message) {
+      endpoint = `${url}/message/sendImage`;
+      payload.image = image;
+      payload.caption = message;
+    } else {
+      endpoint = `${url}/message/sendText`;
+      payload.message = message;
+    }
+
+    if (options) {
+      payload.options = options;
+    }
+
+    const response = await axios.post(endpoint, payload, {
+      headers: {
+        "Content-Type": "application/json",
+        apikey: key,
+      },
+    });
+
+    return reply.send(response.data);
+  } catch (error: any) {
+    console.error("Erro ao enviar mensagem:", error);
+    return reply.status(500).send({
+      error: "Erro ao enviar mensagem",
+      details: error?.response?.data || error.message,
+    });
+  }
+};
+
+export default async function (fastify: FastifyInstance, opts: any) {
+  fastify.get("/instances", fetchInstances);
+  fastify.post("/instance/create", createInstance);
+  fastify.post("/instance/delete", deleteInstance);
+  fastify.post("/message/send", sendMessage);
 }
