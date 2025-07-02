@@ -273,7 +273,9 @@ export default async function (app: FastifyInstance) {
             br_code: charge.brCode || null,
             qr_code_image: charge.qrCodeImage || null,
             expires_in: charge.expiresIn || null,
-            expires_date: charge.expiresAt ? new Date(charge.expiresAt) : null,
+            expires_date: new Date(
+              Date.now() + 2 * 60 * 60 * 1000
+            ).toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
             customer: charge.customer || null,
@@ -452,7 +454,9 @@ export default async function (app: FastifyInstance) {
             br_code: charge.brCode || null,
             qr_code_image: charge.qrCodeImage || null,
             expires_in: charge.expiresIn || null,
-            expires_date: charge.expiresAt ? new Date(charge.expiresAt) : null,
+            expires_date: new Date(
+              Date.now() + 2 * 60 * 60 * 1000
+            ).toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
             customer: charge.customer || null,
