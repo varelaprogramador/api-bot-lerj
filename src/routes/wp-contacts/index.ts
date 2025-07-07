@@ -73,7 +73,7 @@ const deleteContact = async (
 };
 
 export default async function (fastify: FastifyInstance) {
-  fastify.get("/wp-contacts", getContacts);
-  fastify.post("/wp-contacts", addContact);
-  fastify.delete("/wp-contacts/:id", deleteContact);
+  fastify.get("/", getContacts);
+  fastify.post("/", addContact);
+  fastify.delete("/id", deleteContact);
 }
