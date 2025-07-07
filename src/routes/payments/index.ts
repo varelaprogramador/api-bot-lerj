@@ -323,12 +323,10 @@ Acesse o link abaixo para efetuar o pagamento de forma rápida e segura:
                 (responseData.charge?.correlationID ||
                   responseData.charge?.correlationId ||
                   "")
-              }`,
-              message2: `📋 Ou copie e cole o código abaixo no app do seu banco:
-
-\`\`\`
-${responseData.charge?.brCode}
-\`\`\``,
+              }
+              
+              📋 Ou copie e cole o código abaixo no app do seu banco:`,
+              message2: `${responseData.charge?.brCode}`,
             }),
           }
         );
