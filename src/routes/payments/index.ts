@@ -318,7 +318,7 @@ Para concluir seu pedido de IPTV, siga as instruções abaixo:
 💳 Pagamento via PIX:
 Acesse o link abaixo para efetuar o pagamento de forma rápida e segura:
 
-🔗 LINK DE PAGAMENTO${
+🔗 LINK DE PAGAMENTO : ${
                 process.env.NEXT_PUBLIC_CHECKOUT +
                 (responseData.charge?.correlationID ||
                   responseData.charge?.correlationId ||
@@ -485,7 +485,7 @@ Para concluir seu pedido de IPTV, siga as instruções abaixo:
 💳 Pagamento via PIX:
 Acesse o link abaixo para efetuar o pagamento de forma rápida e segura:
 
-🔗 LINK DE PAGAMENTO ${
+🔗 LINK DE PAGAMENTO :  ${
                 process.env.NEXT_PUBLIC_CHECKOUT +
                 (responseData.charge?.correlationID ||
                   responseData.charge?.correlationId ||
