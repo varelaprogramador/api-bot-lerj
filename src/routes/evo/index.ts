@@ -60,8 +60,11 @@ const createInstance = async (request: FastifyRequest, reply: FastifyReply) => {
     }
 
     const response = await axios.post(
-      `${url}/instance/createInstance`,
-      { name: instanceName },
+      `${url}/instance/create`,
+      {
+        instanceName,
+        integration: "WHATSAPP-BAILEYS",
+      },
       {
         headers: {
           "Content-Type": "application/json",
@@ -91,12 +94,10 @@ const deleteInstance = async (request: FastifyRequest, reply: FastifyReply) => {
         .send({ error: "Nome da instância é obrigatório" });
     }
 
-    const response = await axios.post(
-      `${url}/instance/deleteInstance`,
-      { name: instanceName },
+    const response = await axios.delete(
+      `${url}/instance/delete/${instanceName}`,
       {
         headers: {
-          "Content-Type": "application/json",
           apikey: key,
         },
       }
@@ -107,6 +108,38 @@ const deleteInstance = async (request: FastifyRequest, reply: FastifyReply) => {
     console.error("Erro ao deletar instância:", error);
     return reply.status(500).send({
       error: "Erro ao deletar instância",
+      details: error?.response?.data || error.message,
+    });
+  }
+};
+
+const connectInstance = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  try {
+    const { url, key } = getEvolutionApiConfig();
+    const { instanceName } = request.params as { instanceName: string };
+
+    if (!instanceName) {
+      return reply
+        .status(400)
+        .send({ error: "Nome da instância é obrigatório" });
+    }
+
+    const response = await axios.get(
+      `${url}/instance/connect/${instanceName}`,
+      {
+        headers: {
+          apikey: key,
+        },
+      }
+    );
+    return reply.send(response.data);
+  } catch (error: any) {
+    console.error("Erro ao conectar instância:", error);
+    return reply.status(500).send({
+      error: "Erro ao conectar instância",
       details: error?.response?.data || error.message,
     });
   }
@@ -173,5 +206,6 @@ export default async function (fastify: FastifyInstance, opts: any) {
   fastify.get("/instances", fetchInstances);
   fastify.post("/instance/create", createInstance);
   fastify.post("/instance/delete", deleteInstance);
+  fastify.get("/instance/connect/:instanceName", connectInstance);
   fastify.post("/message/send", sendMessage);
 }
