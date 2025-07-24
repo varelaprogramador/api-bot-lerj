@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import axios from "axios";
 
 export default async function (app: FastifyInstance) {
-    app.post("/pix-expirado", async (req, reply) => {
+    app.post("/", async (req, reply) => {
         try {
             const data = req.body as any;
             const isTestEvent = data?.evento === "teste_webhook";
